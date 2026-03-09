@@ -1,0 +1,20 @@
+# ============================================================
+# Linux-C Course — Debian Template (Networking)
+# Incluye herramientas de red adicionales
+# ============================================================
+FROM debian:latest
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    gcc make gdb valgrind strace \
+    iproute2 iputils-ping dnsutils netcat-openbsd \
+    libssl-dev \
+    curl wget \
+    nftables \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+RUN make all
+CMD ["make", "run"]

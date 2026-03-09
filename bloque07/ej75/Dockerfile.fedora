@@ -1,0 +1,23 @@
+# ============================================================
+# Linux-C Course — Fedora Template (Systemd)
+# Para ejercicios que requieren systemd corriendo
+# ============================================================
+FROM fedora:latest
+
+RUN dnf install -y \
+    gcc make gdb valgrind strace \
+    systemd systemd-devel dbus-devel \
+    libselinux-devel \
+    pam-devel \
+    && dnf clean all
+
+# Habilitar systemd
+RUN (cd /lib/systemd/system/sysinit.target.wants/; \
+    for i in *; do [ "$i" = "systemd-tmpfiles-setup.service" ] || rm -f "$i"; done)
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+
+STOPSIGNAL SIGRTMIN+3
+CMD ["/usr/sbin/init"]

@@ -1,0 +1,22 @@
+# ============================================================
+# Linux-C Course — Docker Compose Template
+# Uso: docker compose up --build
+# ============================================================
+services:
+  fedora:
+    build:
+      context: .
+      dockerfile: Dockerfile.fedora
+    volumes:
+      - ./src:/app/src:ro
+    # ports:
+    #   - "8080:8080"
+
+  debian:
+    build:
+      context: .
+      dockerfile: Dockerfile.debian
+    volumes:
+      - ./src:/app/src:ro
+    # ports:
+    #   - "8081:8080"

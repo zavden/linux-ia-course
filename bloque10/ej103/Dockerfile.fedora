@@ -1,0 +1,19 @@
+# ============================================================
+# Linux-C Course — Fedora Template (Networking)
+# Incluye herramientas de red adicionales
+# ============================================================
+FROM fedora:latest
+
+RUN dnf install -y \
+    gcc make gdb valgrind strace \
+    iproute iputils bind-utils nmap-ncat \
+    openssl-devel \
+    curl wget \
+    nftables firewalld \
+    && dnf clean all
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+RUN make all
+CMD ["make", "run"]

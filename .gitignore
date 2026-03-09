@@ -1,0 +1,78 @@
+# ============================================================
+# 🏁 .gitignore - Linux-C Course
+# ============================================================
+
+# --- Build Artifacts ---
+# Localizad build directory used by the Makefiles
+build/
+bin/
+obj/
+
+# Compiled Object files
+*.o
+*.os
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.so.*
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables (generic)
+*.exe
+*.out
+*.app
+
+# Dependency files
+*.d
+
+# --- Debug and Profiling ---
+# GDB / Valgrind / Profiling
+gmon.out
+vgcore.*
+core
+core.*
+*.dSYM/
+.DS_Store
+
+# --- IDEs and Editors ---
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains (CLion, etc)
+.idea/
+cmake-build-*/
+
+# Vim / Emacs
+*~
+*.swp
+*.swo
+*.swn
+
+# --- OS Specific ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+[Tt]humbs.db
+
+# --- Logs and Temp ---
+*.log
+*.tmp
+*.temp
+.cache/
+
+# --- Course Specific ---
+# (Add any specific files you want to ignore here)

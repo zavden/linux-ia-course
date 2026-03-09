@@ -1,0 +1,7 @@
+services:
+  compilador:
+    image: gcc:latest
+    volumes:
+      - ./src:/usr/src/miapp
+    working_dir: /usr/src/miapp
+    command: ["gcc", "-o", "hola", "hola.c"]

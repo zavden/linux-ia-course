@@ -1,0 +1,23 @@
+# ============================================================
+# Linux-C Course — Debian Template (Storage)
+# Para ejercicios de LVM, quotas, xattrs
+# ============================================================
+FROM debian:latest
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    gcc make gdb valgrind strace \
+    lvm2 libdevmapper-dev \
+    quota \
+    attr libattr1-dev \
+    libacl1-dev \
+    e2fsprogs xfsprogs \
+    util-linux \
+    libncurses-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+RUN make all
+CMD ["make", "run"]

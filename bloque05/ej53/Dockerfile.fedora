@@ -1,0 +1,32 @@
+# ============================================================
+# Linux-C Course — Fedora Template
+# Uso: docker build -f Dockerfile.fedora -t <nombre>-fedora .
+# ============================================================
+FROM fedora:latest
+
+# Herramientas de desarrollo base
+RUN dnf install -y \
+    gcc \
+    gcc-c++ \
+    make \
+    cmake \
+    gdb \
+    valgrind \
+    strace \
+    ltrace \
+    man-db \
+    man-pages \
+    && dnf clean all
+
+# Directorio de trabajo
+WORKDIR /app
+
+# Copiar código fuente
+COPY src/ ./src/
+COPY Makefile .
+
+# Compilar
+RUN make all
+
+# Ejecutar
+CMD ["make", "run"]

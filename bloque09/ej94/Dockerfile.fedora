@@ -1,0 +1,20 @@
+# ============================================================
+# Linux-C Course — Fedora Template (Security)
+# Para ejercicios de SELinux, crypto, capabilities, PAM
+# ============================================================
+FROM fedora:latest
+
+RUN dnf install -y \
+    gcc make gdb valgrind strace \
+    openssl-devel \
+    libselinux-devel libselinux-utils \
+    libcap-devel libcap-ng-devel \
+    pam-devel \
+    libseccomp-devel \
+    && dnf clean all
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+RUN make all
+CMD ["make", "run"]

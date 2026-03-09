@@ -1,0 +1,21 @@
+# ============================================================
+# Linux-C Course — Debian Template (Security)
+# Para ejercicios de AppArmor, crypto, capabilities, PAM
+# ============================================================
+FROM debian:latest
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    gcc make gdb valgrind strace \
+    libssl-dev \
+    libapparmor-dev apparmor-utils \
+    libcap-dev libcap-ng-dev \
+    libpam0g-dev \
+    libseccomp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+RUN make all
+CMD ["make", "run"]

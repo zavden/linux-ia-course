@@ -1,0 +1,20 @@
+# ============================================================
+# Linux-C Course — Debian Template (Systemd)
+# Para ejercicios que requieren systemd corriendo
+# ============================================================
+FROM debian:latest
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+    gcc make gdb valgrind strace \
+    systemd systemd-sysv libsystemd-dev libdbus-1-dev \
+    libapparmor-dev \
+    libpam0g-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+
+STOPSIGNAL SIGRTMIN+3
+CMD ["/lib/systemd/systemd"]

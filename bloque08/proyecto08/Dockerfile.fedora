@@ -1,0 +1,22 @@
+# ============================================================
+# Linux-C Course — Fedora Template (Storage)
+# Para ejercicios de LVM, quotas, xattrs
+# ============================================================
+FROM fedora:latest
+
+RUN dnf install -y \
+    gcc make gdb valgrind strace \
+    lvm2 lvm2-devel \
+    quota \
+    attr libattr-devel \
+    libacl-devel \
+    e2fsprogs xfsprogs \
+    util-linux \
+    ncurses-devel \
+    && dnf clean all
+
+WORKDIR /app
+COPY src/ ./src/
+COPY Makefile .
+RUN make all
+CMD ["make", "run"]

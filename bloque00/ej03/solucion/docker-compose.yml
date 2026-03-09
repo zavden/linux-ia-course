@@ -1,0 +1,62 @@
+# ==============================================================================
+# Ejercicio 0.3 — Docker Compose Multi-Distro (SOLUCIÓN DIDÁCTICA)
+#
+# OBJETIVO DIDÁCTICO:
+# Este archivo YAML define una "infraestructura como código".
+# En lugar de escribir comandos `docker build` y `docker run` largos e
+# infames para cada distribución, Compose nos permite definir el estado
+# deseado de múltiples contenedores y levantarlos simultáneamente.
+# ==============================================================================
+
+# La versión "services:" es el estándar moderno de Compose (V2+).
+# Todo lo que esté debajo de "services" es un contenedor individual.
+services:
+
+  # ----------------------------------------------------------------------------
+  # Servicio 1: Fedora
+  # ----------------------------------------------------------------------------
+  fedora:
+    # "build" le dice a Compose cómo construir la imagen antes de correrla.
+    build:
+      # "context" indica dónde está la raíz del proyecto para copiar archivos.
+      # ".." significa que si este archivo está en ej03/solucion/, el contexto
+      # es ej03/ (donde residen los Dockerfiles y la carpeta src/).
+      context: ..
+      
+      # "dockerfile" especifica qué receta exacta usar dentro de ese contexto.
+      dockerfile: Dockerfile.fedora
+      
+    # "volumes" son los "Bind Mounts".
+    # Sintaxis: host_path:container_path:options
+    volumes:
+      # Montamos la carpeta relativa `../src` (nuestro código en la PC host)
+      # hacia la ruta absoluta `/app/src` dentro del contenedor.
+      # El modificador `:ro` (Read-Only) significa que el contenedor puede
+      # compilar y leer nuestro archivo main.c, pero NO puede borrarlo
+      # ni modificar el código fuente original por accidente.
+      - ../src:/app/src:ro
+
+  # ----------------------------------------------------------------------------
+  # Servicio 2: Debian
+  # ----------------------------------------------------------------------------
+  # Todo es idéntico al de Fedora, excepto que usamos la receta de Debian.
+  # Al correr `docker compose up`, Compose levantará ambos en paralelo.
+  debian:
+    build:
+      context: ..
+      # Usamos el Dockerfile específico para Debian
+      dockerfile: Dockerfile.debian
+    volumes:
+      - ../src:/app/src:ro
+
+# ==============================================================================
+# FLUJO DE EJECUCIÓN:
+# 1. `docker compose up --build`
+# 2. Lee este archivo.
+# 3. Construye la imagen de Fedora (instala gcc, make vía dnf).
+# 4. Construye la imagen de Debian (instala gcc, make vía apt-get).
+# 5. Crea un contenedor para cada uno.
+# 6. Monta tu código fuente local (../src) en ambos, protegiéndolo (ro).
+# 7. Ejecuta el CMD definido al fondo de cada Dockerfile (`make run`),
+#    mostrando la salida de ambos compiladores intercalada en tu terminal.
+# ==============================================================================
