@@ -1,0 +1,6 @@
+backend api 127.0.0.1:9001
+backend web 127.0.0.1:9002
+backend admin 127.0.0.1:9003
+route /api api
+route /admin admin
+route / web

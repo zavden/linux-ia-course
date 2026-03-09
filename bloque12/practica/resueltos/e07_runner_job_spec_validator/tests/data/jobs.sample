@@ -1,0 +1,5 @@
+job-index|img-nginx|250|256|60
+job-api|img-api|1500|2048|120
+job-ml|img-ml|2500|8192|600
+job-batch|img-batch|500|4096|900
+bad|img|10|32|0

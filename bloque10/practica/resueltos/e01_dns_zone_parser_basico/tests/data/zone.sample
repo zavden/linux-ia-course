@@ -1,0 +1,11 @@
+$ORIGIN example.com.
+$TTL 3600
+@ 3600 IN SOA ns1.example.com. admin.example.com. (2026030901 7200 3600 1209600 3600)
+@ 3600 IN NS ns1.example.com.
+@ 3600 IN NS ns2.example.com.
+www 300 IN A 192.0.2.10
+api 300 IN AAAA 2001:db8::10
+mail 300 IN A 192.0.2.20
+@ 300 IN MX 10 mail.example.com.
+ftp 300 IN CNAME www.example.com.
+@ 300 IN TXT "v=spf1 mx -all"

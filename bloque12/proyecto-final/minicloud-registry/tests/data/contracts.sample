@@ -1,0 +1,5 @@
+registry|host-reg|8500|tcp|/health|up
+gateway|host-gw|8443|https|/ready|up
+monitor|host-mon|9090|http|/healthz|up
+vault|host-vault|8444|https|/v1/sys/health|down
+runner|host-run|7070|tcp|/health|up

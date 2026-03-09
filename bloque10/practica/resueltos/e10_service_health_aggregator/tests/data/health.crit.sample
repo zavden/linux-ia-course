@@ -1,0 +1,6 @@
+dns=ok
+https=crit
+smtp=ok
+nfs=ok
+samba=ok
+proxy=ok

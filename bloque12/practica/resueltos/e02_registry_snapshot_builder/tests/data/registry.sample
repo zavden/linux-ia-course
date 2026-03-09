@@ -1,0 +1,6 @@
+registry|10.0.0.10|8500|up
+gateway|10.0.0.11|8443|up
+monitor|10.0.0.12|9090|up
+vault|10.0.0.13|8444|down
+runner|10.0.0.14|7070|up
+broken|10.0.0.99|oops|unknown

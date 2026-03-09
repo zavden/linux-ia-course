@@ -1,22 +1,33 @@
-# ============================================================
-# Linux-C Course — Docker Compose Template
-# Uso: docker compose up --build
-# ============================================================
 services:
-  fedora:
+  registry:
     build:
-      context: .
+      context: ./minicloud-registry
       dockerfile: Dockerfile.fedora
-    volumes:
-      - ./src:/app/src:ro
-    # ports:
-    #   - "8080:8080"
 
-  debian:
+  gateway:
     build:
-      context: .
-      dockerfile: Dockerfile.debian
-    volumes:
-      - ./src:/app/src:ro
-    # ports:
-    #   - "8081:8080"
+      context: ./minicloud-gateway
+      dockerfile: Dockerfile.fedora
+    depends_on:
+      - registry
+
+  monitor:
+    build:
+      context: ./minicloud-monitor
+      dockerfile: Dockerfile.fedora
+    depends_on:
+      - gateway
+
+  vault:
+    build:
+      context: ./minicloud-vault
+      dockerfile: Dockerfile.fedora
+    depends_on:
+      - registry
+
+  runner:
+    build:
+      context: ./minicloud-runner
+      dockerfile: Dockerfile.fedora
+    depends_on:
+      - vault

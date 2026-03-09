@@ -1,44 +1,241 @@
-# 📖 THEORY.md — Bloque 07: Debuggers, Make y Metaprogramación (Optimizando el Infierno)
+# THEORY.md — Bloque 07: Debugging, Build Systems y Metaprogramación en C
 
-El Código en C es tan rápido por una razón: **Te quita los estabilizantes de la bicicleta**. Si haces algo malo y pierdes Memoria, el CPU Linux crasheará con el infame Error "Segmentation Fault: Core Dumped". En este bloque, aprenderás a usar las utilidades y artes arcanas para sobrevivir a la guerra contra el Kernel.
-
----
-
-## 1. El Ojo Que Todo Lo Ve: `gdb` (GNU Debugger)
-Compilar con `gcc main.c` crea un ejecutable que no tiene nombres de funciones adentro (solo ceros y unos). Si crashea, Linux no te puede decir "¿Dónde fue?".
-- **Bandera Milagrosa `-g`**: `gcc -g main.c` le inyecta "Símbolos de Debuggeo". Hace tu binario 20% más pesado, ¡pero contiene el Mapa fuente Original!
-- **Arrancar `gdb ./mi_app`**:
-   - `run` (r): Ejecuta tu programa. Si hay un Segfault, ¡Se detendrá EXÁCTAMENTE EN LA LÍNEA DE C QUE EXPLOTÓ!
-   - `break main.c:15` (b): Pone un PARE invisible allí. Cuando corras el `run` se pausará.
-   - `print mi_variable` (p): Muestra qué valores tiene tu array / variable justo en esa milésima de segundo Pausada!
-   - `next` (n): Avanza "1 simple línea C" para que veas la ejecución lenta. `step` (s) se Mete adentro de la función actual.
-   - `backtrace` (bt): Si crasheaste en una librería externa a 5 saltos... ¡El BT te muestra toda la jerarquía de Calls al revés para ver quién causó el mal!.
+Este bloque no trata de “escribir más código”, sino de **hacerlo mantenible, depurable y verificable**.
+La diferencia entre un programa hobby y uno profesional suele estar aquí.
 
 ---
 
-## 2. El Cirujano de Fugas: Valgrind / Memcheck
-Incluso si tu Binario No Crashea (`EXIT_SUCCESS`)... ¡Podría haber perdido / leakeado toda la memoria si no usaste `free()`, causando que la Computadora servidora que lo corra se Apague a los 3 días!
-- `valgrind --leak-check=full ./app`: Emula una CPU virtual lenta, vigila CADA SÓLO `malloc` y `free` ejecutado. 
-- Te Reporta al final los "Orphans" `Definately Lost Bytes`. Si el contador no da *Zero InCorrections*, eres un Peligro C.
-- También intercepta "Use-After-Free" (Ej. usar un puntero Cuyo Free ya mandaste ayer) previniendo Vulnerabilidades de Hackeo de Desbordamiento severas!.
+## 1. Modos de compilación: debug vs release
+
+### 1.1 Objetivos distintos
+- **Debug**: máxima observabilidad.
+- **Release**: máximo rendimiento/tamaño razonable.
+
+### 1.2 Flags típicas
+Debug:
+- `-g`
+- `-O0` (o `-Og`)
+- warnings estrictos (`-Wall -Wextra -Werror`)
+
+Release:
+- `-O2` o `-O3`
+- `-DNDEBUG` (opcional) para desactivar `assert`
+
+### 1.3 `assert`
+`assert` es útil para documentar invariantes internas.
+- No reemplaza validación de entradas de usuario.
+- Puede desactivarse en release (`NDEBUG`), así que no pongas lógica crítica solo ahí.
 
 ---
 
-## 3. El Herrero Automatizado: `make` y GNU Makefiles
-Si en Bloque6 programáramos un server en C de 40 archivos C... ¡Escribiríamos `gcc f1.c f2.c ... f40.c` todos lo días!. Además, cada vez que modificaras el archivo #3... gcc volvería a re-compilar **LOS 40 ARCHIVOS** tardando 10 minutos inútilmente!
-- **Makefile**: Es un script purista (Usa **TABULATIONS `\t`** no espacios, cuidado!) que funciona creando Grafos de Dependencias.
-```makefile
-mi_app: src.o dest.o  # <- Objetivo
-	gcc src.o dest.o -o mi_app  # <- Instruccion (CON UN TAB '\t' AL INICIO, IMPORTANTISIMO)
+## 2. Errores de memoria: categorías y síntomas
 
-src.o: src.c 
-	gcc -c src.c
+Tipos comunes:
+1. leak
+2. use-after-free
+3. out-of-bounds read/write
+4. double-free
+5. punteros no inicializados
+
+Síntomas reales:
+- segfault tardío en función “inocente”
+- corrupción silenciosa de datos
+- comportamiento no determinista entre ejecuciones
+
+Regla práctica: si un bug “aparece y desaparece”, sospecha memoria o concurrencia.
+
+---
+
+## 3. GDB: depuración interactiva
+
+Comandos mínimos útiles:
+- `run`
+- `break <func|file:line>`
+- `next` / `step`
+- `print <expr>`
+- `backtrace`
+- `frame <n>`
+- `info locals`
+
+Flujo recomendado:
+1. reproducir bug con entrada pequeña
+2. breakpoint cerca del fallo
+3. inspeccionar estado justo antes del crash
+4. verificar hipótesis y repetir
+
+---
+
+## 4. Core dumps y análisis post-mortem
+
+Cuando un proceso muere por señal grave (`SIGSEGV`, `SIGABRT`, etc.), el core dump permite inspección posterior.
+
+Checklist básico:
+1. habilitar core dumps en entorno (`ulimit`, políticas del SO)
+2. compilar binario con símbolos (`-g`)
+3. abrir con debugger (`gdb <binario> <core>`)
+4. inspeccionar stack, variables y memoria
+
+Ventaja: no necesitas reproducir bug en vivo para investigarlo.
+
+---
+
+## 5. Sanitizers (ASan/UBSan)
+
+### 5.1 AddressSanitizer
+Detecta:
+- out-of-bounds
+- use-after-free
+- stack/heap overflows
+
+### 5.2 UndefinedBehaviorSanitizer
+Detecta UB como:
+- signed overflow
+- shifts inválidos
+- conversiones peligrosas
+
+Uso típico:
+```bash
+gcc -fsanitize=address,undefined -g -O0 ...
 ```
-- `make` lee el archivo y verifica la 'Fecha de Modificación de Kernell'. Si cambiaste "src.c", make sólo corre `gcc -c src.c`, y reutiliza el viejo binario ya forjado de "dest.o", uniendo todo en `.1` segundos y salvándote la vida (y tu trabajo remoto).
+
+En CI/desarrollo, sanitizers suelen dar feedback más rápido que valgrind.
 
 ---
 
-## 4. Inyección de Librerías Estáticas `.a` y `.so` Dinámicas (Opcional)
-- A veces no entregas `.c`, entregas un Librería Mágica de Paga. 
-- `.a` (Archive/Estática): Al usar gcc, este mete/incrusta tu codigo literal en el Binario Resultante .exe final inflándolo de peso per haciéndolo "Portable" .
-- `.so` (Shared Object/Dinámica): Linux solo anota en el Binario final "Hey! Ocupo que cuando esto se corra, el usuario tenga instalada en la RAM Linux la SO". (Esto lo usan las APIs Posix como `-pthread` o `-lm` Matemática). Ahorra peso de Binario.
+## 6. Valgrind/Memcheck (cuando esté disponible)
+
+Muy útil para auditoría de memoria:
+- leaks exactos
+- accesos inválidos
+- rastreo detallado de origen
+
+Tradeoff:
+- ejecución mucho más lenta
+- no siempre disponible en todos los entornos
+
+Recomendación: úsalo en casos reproducibles pequeños y bien acotados.
+
+---
+
+## 7. `errno`, contexto y reporting de errores
+
+Error handling profesional en C:
+- validar valor de retorno de syscalls/libc
+- capturar `errno` inmediatamente tras fallo
+- reportar **qué operación** y **sobre qué recurso** falló
+
+Malo:
+```c
+printf("error\n");
+```
+
+Mejor:
+```c
+fprintf(stderr, "open %s failed: %s\n", path, strerror(errno));
+```
+
+La depuración real depende de ese contexto.
+
+---
+
+## 8. Makefiles y construcción incremental
+
+### 8.1 Concepto clave
+`make` recompila solo lo necesario según dependencias y timestamps.
+
+### 8.2 Buenas prácticas
+- variables (`CC`, `CFLAGS`, `LDFLAGS`, `LDLIBS`)
+- targets estándar (`all`, `clean`, `run`, `test`, `debug`)
+- separar compilación (`.o`) y link final
+- evitar comandos duplicados
+
+### 8.3 Escalado modular
+En proyectos medianos/grandes:
+- varios `.c/.h`
+- bibliotecas internas
+- profiles de build por entorno
+
+---
+
+## 9. Preprocesador y feature flags
+
+Herramientas clave:
+- `#ifdef`, `#if`, `#ifndef`
+- macros parametrizadas
+- constantes de compilación (`-DFAST_MODE=1`)
+
+Usos correctos:
+- activar instrumentación
+- seleccionar implementación por plataforma
+- aislar código experimental
+
+Riesgos:
+- macros opacas con efectos laterales
+- caminos de compilación no testeados
+- exceso de condicionales difíciles de mantener
+
+---
+
+## 10. Librerías estáticas y compartidas
+
+### 10.1 Estática (`.a`)
+- el código se integra al binario final
+- despliegue simple
+- binario más grande
+
+### 10.2 Compartida (`.so`/`.dylib`)
+- se carga en runtime
+- binarios más pequeños
+- gestión de paths/versionado más delicada
+
+Decisión depende de distribución, compatibilidad y operación.
+
+---
+
+## 11. Instrumentación ligera de rendimiento
+
+Antes de optimizar:
+1. medir
+2. identificar hotspots
+3. optimizar lo crítico
+4. volver a medir
+
+En este nivel basta con:
+- `clock_gettime(CLOCK_MONOTONIC, ...)`
+- medición por scope
+- comparación antes/después de cambios
+
+Sin medición, “optimizar” suele ser intuición incorrecta.
+
+---
+
+## 12. Mapa del bloque (práctica)
+
+### Resueltos
+- `e01_assert_failfast`: invariantes y validación defensiva.
+- `e02_trace_macros`: logging por niveles con macros.
+- `e03_errno_contexto`: errores con contexto y `errno`.
+- `e04_multifile_make_basico`: proyecto modular `.c/.h`.
+- `e05_mini_unittest_harness`: harness simple de tests en C.
+- `e06_preprocessor_feature_flags`: rutas por `#ifdef`.
+- `e07_static_library_local`: build + uso de librería estática.
+- `e08_dispatch_table_comandos`: tabla de comandos y punteros a función.
+- `e09_clock_benchmark_basico`: medición temporal básica.
+- `e10_mini_profiler_scopes`: instrumentación por etapas.
+
+### Complejos
+- `c01_debuggable_cli_calculadora`: CLI modular depurable con gdb.
+- `c02_build_system_static_shared`: pipeline de build estática/compartida.
+- `c03_memory_bug_lab_guiado`: laboratorio reproducible de bugs de memoria.
+
+---
+
+## 13. Checklist de calidad antes de entregar
+
+1. ¿Compila en `debug` y `release`?
+2. ¿Warnings en cero con flags estrictas?
+3. ¿Errores reportan contexto útil?
+4. ¿Tests cubren rutas de error, no solo “happy path”?
+5. ¿Hay instrumentación mínima para tiempos críticos?
+
+Si cumples esto, tu código en C será mucho más fácil de evolucionar y operar.

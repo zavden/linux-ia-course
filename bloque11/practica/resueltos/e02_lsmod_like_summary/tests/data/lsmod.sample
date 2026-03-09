@@ -1,0 +1,4 @@
+Module                  Size  Used by
+nf_conntrack           172032  1 xt_conntrack
+xfs                   1765376  0
+loop                    40960  2

@@ -1,0 +1,20 @@
+[global]
+   workgroup = WORKGROUP
+   server string = Samba Server
+
+[public]
+   path = /srv/samba/public
+   read only = no
+   guest ok = yes
+   browseable = yes
+
+[finance]
+   path = /srv/samba/finance
+   read only = yes
+   guest ok = no
+   browseable = no
+
+[ops]
+   path = /srv/samba/ops
+   writable = yes
+   guest ok = no

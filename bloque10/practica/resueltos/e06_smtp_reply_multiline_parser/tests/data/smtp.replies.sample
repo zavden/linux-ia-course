@@ -1,0 +1,5 @@
+220-mail.example.com ESMTP ready
+220 SIZE 10485760
+250-mail.example.com Hello client.example.com
+250-STARTTLS
+250 AUTH PLAIN LOGIN

@@ -1,0 +1,6 @@
+dns=ok
+https=ok
+smtp=warn
+nfs=ok
+samba=ok
+proxy=ok

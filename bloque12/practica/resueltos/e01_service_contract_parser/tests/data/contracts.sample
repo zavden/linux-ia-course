@@ -1,0 +1,5 @@
+registry|8500|tcp|/health
+gateway|8443|https|/ready
+monitor|9090|http|/healthz
+vault|8444|https|/v1/sys/health
+runner|0|tcp|/ping

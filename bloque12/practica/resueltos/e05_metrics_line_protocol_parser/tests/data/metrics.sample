@@ -1,0 +1,6 @@
+gateway 20 200
+gateway 35 200
+registry 80 200
+vault 140 503
+runner 95 500
+monitor 90 200

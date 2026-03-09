@@ -1,0 +1,5 @@
+registry=ok
+gateway=ok
+monitor=warn
+vault=ok
+runner=ok

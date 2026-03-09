@@ -1,0 +1,35 @@
+services:
+  registry:
+    build:
+      context: ./minicloud-registry
+      dockerfile: Dockerfile.fedora
+    command: ["./build/main", "--serve", "28081", "tests/data/routes.sample"]
+
+  vault:
+    build:
+      context: ./minicloud-vault
+      dockerfile: Dockerfile.fedora
+    command: ["./build/main", "--serve", "28082", "tests/data/secrets.sample"]
+
+  runner:
+    build:
+      context: ./minicloud-runner
+      dockerfile: Dockerfile.fedora
+    command: ["./build/main", "--serve", "28083", "tests/data/capacity.sample"]
+
+  monitor:
+    build:
+      context: ./minicloud-monitor
+      dockerfile: Dockerfile.fedora
+    command: ["./build/main", "--serve", "28084"]
+
+  gateway:
+    build:
+      context: ./minicloud-gateway
+      dockerfile: Dockerfile.fedora
+    depends_on:
+      - registry
+      - vault
+      - runner
+      - monitor
+    command: ["./build/main", "--request", "/run/job-api", "--registry", "127.0.0.1:28081", "--vault", "127.0.0.1:28082", "--runner", "127.0.0.1:28083", "--monitor", "127.0.0.1:28084"]

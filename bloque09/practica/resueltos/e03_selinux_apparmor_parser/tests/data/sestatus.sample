@@ -1,0 +1,4 @@
+SELinux status:                 enabled
+Current mode:                   enforcing
+Mode from config file:          enforcing
+Policy MLS status:              enabled

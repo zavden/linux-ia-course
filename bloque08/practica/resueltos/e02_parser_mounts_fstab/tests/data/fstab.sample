@@ -1,0 +1,6 @@
+# comentario
+UUID=111-222 / ext4 defaults 0 1
+UUID=333-444 /home xfs defaults 0 2
+
+# otra
+server:/export /mnt/nfs nfs defaults 0 0

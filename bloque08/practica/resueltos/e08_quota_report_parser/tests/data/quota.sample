@@ -1,0 +1,5 @@
+#user blocks soft hard
+alice 900 1000 1200
+bob 1300 1000 1200
+carol 800 900 950
+dave 1250 1200 1240

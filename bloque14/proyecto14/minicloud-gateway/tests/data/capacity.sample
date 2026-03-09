@@ -1,0 +1,3 @@
+cpu_free_milli=3000
+mem_free_mb=4096
+max_parallel_jobs=2

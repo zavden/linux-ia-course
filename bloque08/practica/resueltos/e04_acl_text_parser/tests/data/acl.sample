@@ -1,0 +1,12 @@
+# file: data.txt
+# owner: root
+# group: root
+user::rw-
+user:alice:r--
+group::r--
+group:dev:rw-
+mask::rw-
+other::---
+default:user::rw-
+default:group::r--
+default:other::---

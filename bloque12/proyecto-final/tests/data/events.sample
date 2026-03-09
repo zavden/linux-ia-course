@@ -1,0 +1,5 @@
+2026-03-09T12:00:00Z gateway publish ok 35
+2026-03-09T12:00:01Z registry consume ok 22
+2026-03-09T12:00:02Z runner consume err 190
+2026-03-09T12:00:03Z monitor retry err 250
+2026-03-09T12:00:04Z vault publish ok 58

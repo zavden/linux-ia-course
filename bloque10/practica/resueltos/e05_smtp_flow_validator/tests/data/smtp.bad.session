@@ -1,0 +1,6 @@
+EHLO client.example.com
+RCPT TO:<bob@example.com>
+DATA
+Mensaje
+.
+QUIT

@@ -1,0 +1,2 @@
+/dev/sda1 / ext4 rw 0 0
+/dev/sda2 /data xfs rw 0 0

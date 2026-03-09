@@ -1,0 +1,7 @@
+backend api up
+backend auth up
+backend admin down
+route / api
+route /api api
+route /auth auth
+route /admin admin

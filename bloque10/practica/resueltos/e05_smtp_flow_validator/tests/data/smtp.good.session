@@ -1,0 +1,10 @@
+EHLO client.example.com
+MAIL FROM:<alice@example.com>
+RCPT TO:<bob@example.com>
+RCPT TO:<carol@example.com>
+DATA
+Subject: demo
+
+Hola equipo,
+.
+QUIT

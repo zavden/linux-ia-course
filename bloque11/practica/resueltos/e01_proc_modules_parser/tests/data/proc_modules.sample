@@ -1,0 +1,3 @@
+nf_conntrack 172032 1 xt_conntrack, Live 0xffffffffc06e9000
+xfs 1765376 0 - Live 0xffffffffc10d5000
+loop 40960 2 - Live 0xffffffffc0a67000

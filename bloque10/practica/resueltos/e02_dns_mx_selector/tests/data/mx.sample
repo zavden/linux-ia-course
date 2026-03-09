@@ -1,0 +1,4 @@
+example.com. 3600 IN MX 20 mail2.example.com.
+example.com. 3600 IN MX 10 mail1.example.com.
+example.com. 3600 IN MX 30 backup.example.com.
+other.com. 3600 IN MX 5 mx.other.com.

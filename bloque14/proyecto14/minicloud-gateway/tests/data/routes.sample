@@ -1,0 +1,3 @@
+/run|runner|127.0.0.1|29083|up
+/status|monitor|127.0.0.1|29084|up
+/admin|admin|127.0.0.1|29999|down
